@@ -4,3 +4,9 @@ venv/
 # Python cache files
 __pycache__/
 *.pyc
+
+# Vercel
+.vercel
+
+# Node
+node_modules/

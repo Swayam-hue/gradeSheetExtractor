@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Sheet Extractor — SMU</title>
+  <meta name="description" content="Upload your SMU grade sheets and instantly extract your marks, grades, and calculate your SGPA. Fast, private, and runs entirely in your browser.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="app-wrapper">
+
+  <!-- ════════════════════════════════════════════════════
+       UPLOAD VIEW
+  ═════════════════════════════════════════════════════ -->
+  <div id="upload-view" class="view active">
+    <div class="card">
+
+      <header class="app-header">
+        <div class="app-logo">📊</div>
+        <h1>Grade Sheet Extractor</h1>
+        <p>Upload your grade sheets and see your results instantly.</p>
+      </header>
+
+      <form id="upload-form" novalidate>
+
+        <div class="form-group">
+          <label for="regno">Registration Number</label>
+          <input
+            type="text"
+            id="regno"
+            name="regno"
+            class="form-input"
+            placeholder="e.g. 202300009"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label>Grade Sheets (.txt files)</label>
+
+          <!-- Hidden actual file input -->
+          <input
+            type="file"
+            id="files"
+            name="grade_files"
+            id="file-input-hidden"
+            accept=".txt"
+            multiple
+            style="display:none"
+          >
+
+          <!-- Visible drop zone -->
+          <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Click or drag to upload grade sheet files">
+            <div class="drop-zone-icon">📂</div>
+            <p class="drop-zone-text"><strong>Click to browse</strong> or drag &amp; drop</p>
+            <p class="drop-zone-hint">Accepts .txt grade sheet files</p>
+          </div>
+
+          <!-- File list preview -->
+          <div id="file-list-container">
+            <p class="file-placeholder">Selected files will appear here…</p>
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="btn-primary">
+          <span id="btn-spinner" class="spinner" style="display:none"></span>
+          <span id="btn-text">Extract Grades</span>
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════
+       RESULTS VIEW
+  ═════════════════════════════════════════════════════ -->
+  <div id="results-view" class="view">
+    <div class="card">
+
+      <!-- Error banner (hidden by default) -->
+      <div id="error-banner" class="error-banner" role="alert">
+        <strong>⚠️ Something went wrong</strong>
+        <span id="error-msg"></span>
+        <div style="margin-top:0.75rem">
+          <button id="error-back" class="btn-secondary" onclick="document.getElementById('extract-again').click()">← Go Back</button>
+        </div>
+      </div>
+
+      <!-- Results header -->
+      <div class="results-header">
+        <div class="results-title">
+          <h2>Results for</h2>
+          <div class="regno-display" id="result-regno">—</div>
+        </div>
+        <button id="extract-again" class="btn-secondary">↩ Extract Again</button>
+      </div>
+
+      <!-- Stats bar -->
+      <div id="stats-bar" class="stats-bar" style="display:none">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-subjects">—</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-credits">—</div>
+          <div class="stat-label">Total Credits</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-passed">—</div>
+          <div class="stat-label">Passed</div>
+        </div>
+      </div>
+
+      <!-- Results table -->
+      <div class="table-wrapper">
+        <table role="table" aria-label="Grade results table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Subject</th>
+              <th class="text-center">Credits</th>
+              <th class="text-center">Internal</th>
+              <th class="text-center">End-Sem</th>
+              <th class="text-center">Total</th>
+              <th class="text-center">Grade</th>
+            </tr>
+          </thead>
+          <tbody id="results-tbody">
+            <!-- Populated by app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SGPA Section -->
+      <div id="sgpa-section" class="sgpa-section">
+        <div class="sgpa-card">
+
+          <!-- SVG Arc -->
+          <div class="sgpa-arc-wrapper">
+            <svg width="140" height="140" viewBox="0 0 90 90" aria-hidden="true">
+              <defs>
+                <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%"   stop-color="#6366f1"/>
+                  <stop offset="100%" stop-color="#a78bfa"/>
+                </linearGradient>
+              </defs>
+              <!-- Background track -->
+              <circle class="sgpa-arc-bg"
+                cx="45" cy="45" r="40"
+                fill="none" stroke-width="7"
+              />
+              <!-- Animated fill -->
+              <circle id="sgpa-fill" class="sgpa-arc-fill"
+                cx="45" cy="45" r="40"
+                fill="none" stroke-width="7"
+              />
+            </svg>
+            <div class="sgpa-arc-text">
+              <span class="sgpa-number" id="sgpa-value">—</span>
+              <span class="sgpa-label">SGPA</span>
+            </div>
+          </div>
+
+          <!-- Text details -->
+          <div class="sgpa-details">
+            <div class="sgpa-remark" id="sgpa-remark"></div>
+            <div class="sgpa-subtext">
+              Semester Grade Point Average calculated across all uploaded subjects.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="app-footer">
+    All processing happens in your browser — no data is uploaded to any server.
+  </footer>
+
+</div><!-- /.app-wrapper -->
+
+<!-- Scripts: parser first, then app logic -->
+<script src="js/gradeParser.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

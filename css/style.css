@@ -1,0 +1,582 @@
+/* ============================================================
+   Grade Sheet Extractor — Premium Dark Theme
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ─── CSS Variables ─────────────────────────────────────────── */
+:root {
+  --bg-base:        #07090f;
+  --bg-surface:     rgba(255, 255, 255, 0.04);
+  --bg-hover:       rgba(255, 255, 255, 0.07);
+  --border:         rgba(255, 255, 255, 0.09);
+  --border-bright:  rgba(255, 255, 255, 0.18);
+
+  --accent-1:       #6366f1;   /* indigo */
+  --accent-2:       #8b5cf6;   /* violet */
+  --accent-glow:    rgba(99, 102, 241, 0.35);
+
+  --text-primary:   #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+
+  --grade-s:  #fbbf24;
+  --grade-a:  #34d399;
+  --grade-b:  #60a5fa;
+  --grade-c:  #2dd4bf;
+  --grade-d:  #fb923c;
+  --grade-e:  #f59e0b;
+  --grade-f:  #f87171;
+
+  --radius:   1rem;
+  --radius-sm: 0.5rem;
+  --shadow:   0 8px 40px rgba(0, 0, 0, 0.6);
+  --transition: 0.25s ease;
+}
+
+/* ─── Reset & Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(ellipse 70% 50% at 10% 0%,   rgba(99, 102, 241, 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%,  rgba(139, 92, 246, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 90% 5%,    rgba(251, 191, 36, 0.08) 0%, transparent 50%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  overflow-x: hidden;
+}
+
+/* ─── App Shell ──────────────────────────────────────────────── */
+.app-wrapper {
+  width: 100%;
+  max-width: 860px;
+}
+
+/* ─── Views (upload / results) ───────────────────────────────── */
+.view { display: none; animation: fadeSlideUp 0.4s ease both; }
+.view.active { display: block; }
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ─── Card ───────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: var(--shadow);
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+.app-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.app-logo {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+
+.app-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(120deg, #e2e8f0 30%, var(--accent-1));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.4rem;
+}
+
+.app-header p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* ─── Form Labels ────────────────────────────────────────────── */
+.form-group { margin-bottom: 1.5rem; }
+
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* ─── Text Input ─────────────────────────────────────────────── */
+.form-input {
+  width: 100%;
+  padding: 0.85rem 1.1rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.form-input::placeholder { color: var(--text-muted); }
+
+.form-input:focus {
+  border-color: var(--accent-1);
+  background: rgba(99,102,241,0.07);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ─── Drop Zone ──────────────────────────────────────────────── */
+#file-input-hidden { display: none; }
+
+.drop-zone {
+  border: 2px dashed var(--border-bright);
+  border-radius: var(--radius-sm);
+  padding: 2rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  background: rgba(255,255,255,0.02);
+  user-select: none;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+  border-color: var(--accent-1);
+  background: rgba(99,102,241,0.06);
+}
+
+.drop-zone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+
+.drop-zone-text {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+}
+
+.drop-zone-text strong { color: var(--accent-1); font-weight: 600; }
+
+.drop-zone-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 0.3rem;
+}
+
+/* ─── File List Preview ──────────────────────────────────────── */
+#file-list-container {
+  margin-top: 0.75rem;
+  max-height: 160px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-bright) transparent;
+}
+
+.file-placeholder {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  padding: 0.4rem 0;
+}
+
+.file-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  padding: 0.55rem 0.8rem;
+  animation: fadeSlideUp 0.2s ease both;
+}
+
+.file-icon { font-size: 1rem; flex-shrink: 0; }
+
+.file-info { display: flex; flex-direction: column; min-width: 0; }
+
+.file-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-subject {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ─── Submit Button ──────────────────────────────────────────── */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.95rem;
+  margin-top: 0.5rem;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity var(--transition), transform var(--transition), box-shadow var(--transition);
+  box-shadow: 0 4px 24px var(--accent-glow);
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 32px var(--accent-glow);
+}
+
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Secondary Button ───────────────────────────────────────── */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.4rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border-bright);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.28);
+}
+
+/* ─── Results Header ─────────────────────────────────────────── */
+.results-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.results-title h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.2rem;
+}
+
+.results-title .regno-display {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+/* ─── Error Banner ───────────────────────────────────────────── */
+.error-banner {
+  display: none;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.5rem;
+  color: #fca5a5;
+  font-size: 0.92rem;
+}
+
+.error-banner strong { display: block; margin-bottom: 0.25rem; }
+
+/* ─── Stats Bar ──────────────────────────────────────────────── */
+.stats-bar {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  flex: 1;
+  background: var(--bg-surface);
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+
+.stat-item:hover { background: var(--bg-hover); }
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ─── Table ──────────────────────────────────────────────────── */
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead {
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border);
+}
+
+thead th {
+  padding: 0.75rem 1rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+tbody tr {
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background var(--transition);
+  opacity: 0;
+  animation: fadeSlideUp 0.35s ease both;
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background: var(--bg-hover); }
+
+tbody td {
+  padding: 0.8rem 1rem;
+  color: var(--text-primary);
+}
+
+.text-center { text-align: center; }
+
+.subject-code {
+  font-family: 'Courier New', monospace;
+  font-size: 0.82rem;
+  background: rgba(99,102,241,0.14);
+  color: #a5b4fc;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid rgba(99,102,241,0.25);
+}
+
+.subject-name {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  min-width: 200px;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+}
+
+/* ─── Grade Badges ───────────────────────────────────────────── */
+.grade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 2px solid;
+}
+
+.grade-s { color: var(--grade-s); border-color: var(--grade-s); background: rgba(251,191,36,0.12); }
+.grade-a { color: var(--grade-a); border-color: var(--grade-a); background: rgba(52,211,153,0.12); }
+.grade-b { color: var(--grade-b); border-color: var(--grade-b); background: rgba(96,165,250,0.12); }
+.grade-c { color: var(--grade-c); border-color: var(--grade-c); background: rgba(45,212,191,0.12); }
+.grade-d { color: var(--grade-d); border-color: var(--grade-d); background: rgba(251,146,60,0.12); }
+.grade-e { color: var(--grade-e); border-color: var(--grade-e); background: rgba(245,158,11,0.12); }
+.grade-f { color: var(--grade-f); border-color: var(--grade-f); background: rgba(248,113,113,0.12); }
+.grade-other { color: var(--text-secondary); border-color: var(--border-bright); background: var(--bg-hover); }
+
+/* ─── SGPA Section ───────────────────────────────────────────── */
+.sgpa-section {
+  display: none;
+  margin-top: 0.5rem;
+}
+
+.sgpa-card {
+  background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
+  border: 1px solid rgba(99,102,241,0.28);
+  border-radius: var(--radius);
+  padding: 2rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+/* SVG Arc */
+.sgpa-arc-wrapper {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+}
+
+.sgpa-arc-wrapper svg { transform: rotate(-90deg); }
+
+.sgpa-arc-bg { stroke: rgba(255,255,255,0.08); }
+.sgpa-arc-fill {
+  stroke: url(#arcGrad);
+  stroke-linecap: round;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 251.2;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.sgpa-arc-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.sgpa-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.sgpa-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 0.2rem;
+}
+
+.sgpa-details {
+  max-width: 280px;
+}
+
+.sgpa-remark {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.sgpa-subtext {
+  font-size: 0.87rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ─── Divider ─────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+.app-footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .card { padding: 1.5rem 1.25rem; }
+  .app-header h1 { font-size: 1.5rem; }
+  .sgpa-card { flex-direction: column; gap: 1.5rem; }
+  .results-header { flex-direction: column; }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-item { flex: 1 1 calc(50% - 1px); min-width: 0; }
+}
