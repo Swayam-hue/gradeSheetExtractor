@@ -1,0 +1,9 @@
+# Ignore Python backend files — this is a static site deployment.
+# Vercel should not attempt to build a Python environment.
+requirements.txt
+app.py
+extract_grades.py
+venv/
+my_grades/
+__pycache__/
+*.pyc
